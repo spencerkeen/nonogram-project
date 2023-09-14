@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles/nonogram-styles.css">
+  </head>
+  <body>
+    <button onclick="init(5);">5x5</button>
+    <button onclick="init(10);">10x10</button>
+    <button onclick="init(15);">15x15</button>
+    
+    <div id="gameDiv" class="gameDiv">
+      <div id="blankDiv"></div>
+      <div id="colDiv"></div>
+      <div id="rowDiv"></div>
+      <div id="squaresDiv" class="squaresDiv"></div>
+      
+    </div>
+
+    <script>
+      //Model
+      let squaresArray = [];
+      let trueArray = [];
+      let rowHints = [];
+      let colHints = [];
+
+      function init (n) {
+        initTrueArray(n);
+
+        initHints();
+
+        initSquares(n);
+
+        renderSquares();
+
+        renderGame(n);
+      }
+
+      function initTrueArray (n) {
+        trueArray = [];
+        let rowArray = [];
+
+        for(let i = 0; i < n; i++) {
+          for(let j = 0; j < n; j++) {
+            if(Math.round(Math.random()) === 1) {
+              rowArray.push(true);
+            } else {
+              rowArray.push(false);
+            }
+          }
+          trueArray.push(rowArray);
+          rowArray = [];
+        }
+      }
+
+      function initHints () {
+        rowHints = [];
+        colHints = [];
+        let numLinked = 0;
+        let tempArray = [];
+
+        for(let i = 0; i < trueArray.length; i++) {
+          for(let j = 0; j < trueArray[i].length; j++) {
+            if(trueArray[i][j] === true) {
+              numLinked++;
+              if(j === trueArray[i].length - 1) {
+                tempArray.push(numLinked);
+                numLinked = 0;
+              }
+            } else if (numLinked !== 0) {
+              tempArray.push(numLinked);
+              numLinked = 0;
+            }
+          }
+          if(tempArray.length === 0) {
+            tempArray.push(0);
+          }
+          rowHints.push(tempArray);
+          tempArray = [];
+        }
+
+        for(let i = 0; i < trueArray[0].length; i++) {
+          for(let j = 0; j < trueArray.length; j++) {
+            if(trueArray[j][i] === true) {
+              numLinked++;
+              if(j === trueArray.length - 1) {
+                tempArray.push(numLinked);
+                numLinked = 0;
+              }
+            } else if (numLinked !== 0) {
+              tempArray.push(numLinked);
+              numLinked = 0;
+            }
+          }
+          if(tempArray.length === 0) {
+            tempArray.push(0);
+          }
+          colHints.push(tempArray);
+          tempArray = [];
+        }
+      }
+
+      function initSquares (n) {
+        squaresArray = [];
+        let rowArray = [];
+
+        for(let i = 0; i < n; i++) {
+          for(let j = 0; j < n; j++) {
+            rowArray.push({state: 'emptySquare', id: 'r' + i + 'c' + j, truth: false});
+          }
+          squaresArray.push(rowArray);
+          rowArray = [];
+        }
+      }
+
+      //View
+
+      function renderSquares () {
+        let squaresDiv = document.getElementById('squaresDiv');
+        squaresDiv.innerHTML = '';
+
+        squaresArray.forEach(function (rowArray) {
+          let rowDiv = document.createElement('div');
+          rowDiv.className = 'squaresRowDiv';
+          rowArray.forEach(function (squareInfo) {
+            let square = document.createElement('button');
+            square.className = squareInfo.state;
+            square.id = squareInfo.id;
+            square.onclick = clicked;
+            rowDiv.appendChild(square);
+          });
+          squaresDiv.appendChild(rowDiv);
+        });
+      }
+
+      function renderGame (n) {
+        let blankDiv = document.getElementById('blankDiv');
+        let colDiv = document.getElementById('colDiv');
+        let rowDiv = document.getElementById('rowDiv');
+        let squaresDiv = document.getElementById('squaresDiv');
+
+        colDiv.innerHTML = '';
+        rowDiv.innerHTML = '';
+
+        blankDiv.className = 'blankDiv';
+        rowDiv.className = 'rowDiv';
+        colDiv.className = 'colDiv';
+
+        rowDiv.style = rowDiv.style + 'height: ' + (22*n) + 'px;';
+        colDiv.style = colDiv.style + 'width: ' + (20*n) + 'px;';
+
+
+        let rowHint;
+        for(let i = 0; i < rowHints.length; i++) {
+          rowHint = document.createElement('div');
+          rowHint.innerText = '';
+          rowHint.style = 'text-align: right;';
+          for(let j = 0; j < rowHints[i].length; j++) {
+            rowHint.innerText = rowHint.innerText + rowHints[i][j] + ' ';
+          }
+          rowHint.className = 'rowHintDiv';
+          rowDiv.appendChild(rowHint);
+        }
+
+        let colHint;
+        let colHintElem;
+        for(let i = 0; i < colHints.length; i++) {
+          colHint = document.createElement('div');
+          colHint.innerText = '';
+          for(let j = 0; j < colHints[i].length; j++) {
+            colHintElem = document.createElement('div');
+            colHintElem.className = 'colHintElem';
+            colHintElem.innerText = colHints[i][j];
+            colHint.appendChild(colHintElem);
+          }
+          colHint.className = 'colHintDiv';
+          colDiv.appendChild(colHint);
+        }
+      }
+
+      //Controller
+
+      function clicked (event) {        
+        let square = event.target;
+        let cInd;
+        for(let ind = 1; ind < square.id.length; ind++) {
+          if(square.id.substring(ind, ind + 1) === 'c') {
+            cInd = ind;
+            break;
+          }
+        }
+        let i = parseInt(square.id.substring(1, cInd));
+        let j = parseInt(square.id.substring(cInd + 1, square.id.length));
+
+        if(event.ctrlKey === false) {
+          squaresArray[i][j].state = 'trueSquare';
+          squaresArray[i][j].truth = true;
+          square.className = 'trueSquare';
+        } else {
+          squaresArray[i][j].state = 'falseSquare';
+          squaresArray[i][j].truth = false;
+          square.className = 'falseSquare';
+        }
+
+        renderSquares();
+
+        checkArray();
+      }
+
+      function checkArray () {
+        let incorrectSquare = false;
+
+        for(let i = 0; i < squaresArray.length; i++) {
+          if(incorrectSquare) {
+            break;
+          }
+          for(let j = 0; j < squaresArray[i].length; j++) {
+            if(squaresArray[i][j].truth !== trueArray[i][j]) {
+              incorrectSquare = true;
+
+              break;
+            }
+          }
+        }
+
+        let colDiv = document.getElementById('colDiv');
+        let rowDiv = document.getElementById('rowDiv');
+        let squaresDiv = document.getElementById('squaresDiv');
+
+        if(!incorrectSquare) {
+          colDiv.innerHTML = '';
+          rowDiv.innerHTML = '';
+          squaresDiv.innerHTML = '';
+        }
+      }
+    </script>
+  </body>
+</html>

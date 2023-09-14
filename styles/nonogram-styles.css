@@ -1,0 +1,92 @@
+button {
+  display: inline-block;
+}
+
+.emptySquare {
+  width: 20px;
+  height: 20px;
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.trueSquare {
+  width: 20px;
+  height: 20px;
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  background-color: green;
+}
+
+.falseSquare {
+  width: 20px;
+  height: 20px;
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  background-color: red;
+}
+
+.gameDiv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+/*
+.blankAndColDiv {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.blankDiv {
+  display: inline-block;
+  vertical-align: top;
+
+  width: 150px;
+  height: 150px;
+}
+
+.colDiv {
+  display: inline-block;
+  vertical-align: bottom;
+}
+*/
+.colHintDiv {
+  display: inline-block;
+  vertical-align: bottom;
+
+  width: 20px;
+}
+/*
+.rowAndSquaresDiv {
+  display: block;
+}
+
+.rowDiv {
+  display: inline-block;
+  vertical-align: top;
+  
+  width: 150px;
+}
+*/
+.rowHintDiv {
+  height: 22px;
+}
+/*
+.squaresDiv {
+  display: inline-block;
+}
+
+.squaresRowDiv {
+  display: block;
+}
+*/

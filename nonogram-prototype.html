@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nonogram Application</title>
+    <style>
+      .checkmark-empty {
+        width: 21.6px;
+        height: 21.6px;
+        border-width: 1px;
+        
+        border-style: solid;
+
+        background-color: white;
+        border-color: gray;
+
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+
+        display: inline;
+        vertical-align: top;
+      }
+
+      .checkmark-check {
+        width: 21.6px;
+        height: 21.6px;
+        border-width: 1px;
+        
+        border-style: solid;
+
+        background-color: white;
+        border-color: gray;
+
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+
+        display: inline;
+        vertical-align: top;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      let buttonClasses = ['checkmark-empty', 'checkmark-check', 'checkmark-x'];
+      let buttonArray = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0]];
+
+      firstrender();
+
+      function changeClass (buttonId) {
+        let b = document.getElementById(buttonId);
+        let i = parseInt(buttonId.substring(2, 3));
+        let j = parseInt(buttonId.substring(3, 4));
+        buttonArray[i][j] += 1;
+        b.innerText = buttonArray[i][j];
+      }
+
+      function firstrender() {
+        for(let i = 0; i < buttonArray.length; i++) {
+          let rowdiv = document.createElement('div');
+          for(let j = 0; j < buttonArray[i].length; j++) {
+            let button = document.createElement('button');
+            button.innerText = buttonArray[i][j];
+            button.setAttribute('onclick', "changeClass('b' + " + i + " + '' + " + j + ");");
+            button.setAttribute('class', "checkmark-empty");
+            button.setAttribute('id', "b" + i + "" + j);
+            document.body.appendChild(button);
+          };
+          document.body.appendChild(rowdiv);
+        };
+        
+      }
+    </script>
+  </body>
+</html>
